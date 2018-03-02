@@ -2,33 +2,22 @@
   <div id="app">
     <app-header></app-header>
     <router-view :api_key="api_key"/>
+    <app-footer></app-footer>
   </div>
 </template>
 
 <script>
 import AppHeader from './components/AppHeader.vue'
+import AppFooter from './components/AppFooter.vue'
 export default {
   name: 'App',
-  components: { AppHeader },
+  components: { AppHeader, AppFooter },
   data () {
     return {
       api_key: 'RGAPI-9ce7b47f-5041-49b7-83a5-f60ace3f1d76',
     }
   },
   methods: {
-    signin: function() {
-      console.log(AppHeader.id);
-      fetch('https://na1.api.riotgames.com/lol/summoner/v3/summoners/by-name/' + AppHeader.id + '?api_key=' + this.api_key).then(response => {
-        return response.json();
-      }).then(json => {
-        this.current = json;
-        this.loading = false;
-        this.number = json.num;
-        return true;
-      }).catch(err => {
-        this.number = this.max;
-      });
-    },
   },
 }
 </script>
