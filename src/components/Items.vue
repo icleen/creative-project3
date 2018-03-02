@@ -1,9 +1,14 @@
 <template>
   <div>
     <h1>Items</h1>
+    <form v-on:submit.prevent="doSearch">
+      <input type="text" v-model="phrase">
+      <button type="submit">Search</button>
+    </form>
+		<br>
     <div class="item-viewer">
       <ul>
-        <li v-for="item in items" v-on:click="showInfo(item)">
+        <li v-for="item in filtered_items" v-on:click="showInfo(item)">
           <h4>{{item.name}}</h4>
         </li>
       </ul>
@@ -26,12 +31,23 @@ export default {
   data () {
     return {
       items: items.data,
+      filtered_items: items.data,
       selected_items: null,
       c_icon: '',
+      phrase: '',
     }
   },
   created: function() {
     console.log('created items');
+  },
+  watch: {
+    phrase: function(value,oldvalue) {
+      if (value !== '') {
+        this.doSearch(value);
+      }else {
+        this.filtered_items = this.items;
+      }
+    },
   },
   methods: {
     showInfo: function(item) {
@@ -40,8 +56,18 @@ export default {
     },
     getImage: function(icon) {
       this.c_icon = 'http://ddragon.leagueoflegends.com/cdn/6.24.1/img/item/' + icon;
-      console.log(this.c_icon);
-    }
+    },
+    doSearch: function() {
+			this.filtered_items = {};
+			let uncase = '';
+			for (let key in this.items) {
+				uncase = this.items[key].name.toLowerCase();
+				if (uncase.indexOf(this.phrase) !== -1) {
+					this.filtered_items[key] = this.items[key];
+				}
+			}
+			this.selected_items = null;
+		},
   }
 }
 </script>

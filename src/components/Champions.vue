@@ -1,9 +1,14 @@
 <template>
   <div>
     <h1>Champions</h1>
+		<form v-on:submit.prevent="doSearch">
+      <input type="text" v-model="phrase">
+      <button type="submit">Search</button>
+    </form>
+		<br>
 		<div class="item-viewer">
 			<ul>
-				<li v-for="item in champs" v-on:click="showInfo(item)">
+				<li v-for="item in filtered_champs" v-on:click="showInfo(item)">
 					<h4>{{item.name}}</h4>
 					<p>({{item.title}})</p>
 				</li>
@@ -34,35 +39,43 @@ export default {
   data () {
     return {
       champs: champs.data,
+			filtered_champs: champs.data,
 			selected_champs: null,
 			c_icon: '',
+			phrase: '',
 		}
   },
   created: function() {
 		console.log('created champs');
-    this.getChamps();
+  },
+	watch: {
+    phrase: function(value,oldvalue) {
+      if (value !== '') {
+        this.doSearch(value);
+      }else {
+        this.filtered_champs = this.champs;
+      }
+    },
   },
   methods: {
-    getChamps: function() {
-			console.log('Still using static data');
-			/*
-			fetch('https://na1.api.riotgames.com/lol/static-data/v3/champions?locale=en_US&dataById=false?api_key=' + this.api_key)
-			.then(response => {
-        return response.json();
-      }).then(json => {
-        this.champs = json.data;
-        return true;
-      }).catch(err => {
-				return false;
-      }); */
-    },
 		showInfo: function(champ) {
 			this.selected_champs = champ;
 			this.getChampImage(champ.image.full);
 		},
 		getChampImage: function(icon) {
 			this.c_icon = 'https://ddragon.leagueoflegends.com/cdn/7.10.1/img/champion/' + icon;
-		}
+		},
+		doSearch: function() {
+			this.filtered_champs = {};
+			let uncase = '';
+			for (let key in this.champs) {
+				uncase = key.toLowerCase();
+				if (uncase.indexOf(this.phrase) !== -1) {
+					this.filtered_champs[key] = this.champs[key];
+				}
+			}
+			this.selected_champs = null;
+		},
   }
 }
 </script>

@@ -1,12 +1,21 @@
 <template>
   <div>
     <h1>Profile</h1>
-    <p>not finished yet</p>
+    <p>(Soon to come: get your own info)</p>
+    <h3>Summoner Name: Hide on Bush</h3>
+    <ul>
+      <li v-for="mast in masteries">
+        <img v-bind:src="getChampImage(idToName(mast.championId))"/>
+        <h4>Champion: {{idToName(mast.championId)}}</h4>
+        <p>Champion Mastery: {{mast.championLevel}}</p>
+      </li>
+    </ul>
   </div>
 </template>
 
 <script>
 import masteries from '../../static/data/faker.json'
+import champs from '../../static/data/champions.json'
 export default {
   props:["api_key"],
   name: 'Profile',
@@ -18,8 +27,22 @@ export default {
   },
   created: function() {
     console.log('created profile');
+    /*let tmp = masteries[0];
+    let name = this.idToName(tmp.championId);*/
   },
   methods: {
+    idToName: function(id) {
+      for (let key in this.champs) {
+        if (id === this.champs[key].id) {
+          return key;
+        }
+      }
+      return null;
+    },
+    getChampImage: function(name) {
+      let icon = this.champs[name].image.full;
+			return 'https://ddragon.leagueoflegends.com/cdn/7.10.1/img/champion/' + icon;
+		},
   }
 }
 </script>
@@ -29,7 +52,7 @@ h1, h2 {
   font-weight: normal;
 }
 p {
-	padding-left: 0.5em;
+	padding-left: 0em;
 }
 ul {
   list-style-type: none;
@@ -43,8 +66,9 @@ li {
 	padding: 10px;
 	margin-bottom: 10px;
 	font-size: 1em;
-	display: flex;
 	align-items: center;
+  display: flex;
+  justify-content: space-around;
 }
 a {
   color: #42b983;
